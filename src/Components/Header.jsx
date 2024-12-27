@@ -1,7 +1,6 @@
 import React from 'react'
 import { useLocation,useNavigate } from 'react-router-dom'
 
-
 const Header = () => {
 
     // getting current Url of the page
@@ -27,11 +26,11 @@ const Header = () => {
             <div>
                 <ul className='flex space-x-10 justify-between items-center'>
                     <li onClick={()=> navigate("/")} className={`py-3 text-sm font-semibold
-                       cursor-pointer text-gray-400 border-b-[3px] border-b-transparent ${PathMatch("/") && "text-white border-b-green-700"}`}>Home</li>
+                       cursor-pointer text-gray-400 border-b-[3px] border-b-transparent ${PathMatch("/") && "text-white border-b-green-300"}`}>Home</li>
                     <li onClick={()=> navigate("/offers")}  className={`py-3 text-sm font-semibold
-                       cursor-pointer text-gray-400 border-b-[3px] border-b-transparent ${PathMatch("/offers") && "text-white border-b-green-700"}`}>Offers</li>
+                       cursor-pointer text-gray-400 border-b-[3px] border-b-transparent ${PathMatch("/offers") && "text-white border-b-green-300"}`}>Offers</li>
                     <li onClick={()=> navigate("/sign_in")}  className={`py-3 text-sm font-semibold
-                       cursor-pointer text-gray-400 border-b-[3px] border-b-transparent ${PathMatch("/sign_in") && "text-white border-b-green-700"}`}>Sign In</li>
+                       cursor-pointer text-gray-400 border-b-[3px] border-b-transparent ${PathMatch("/sign_in") && "text-white border-b-green-300"}`}>Sign In</li>
 
                 </ul>
             </div>
