@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 
-
 import GAuth from '../Components/GAuth';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
@@ -43,7 +42,6 @@ const SignIn = () => {
           <img src="https://plus.unsplash.com/premium_photo-1663089688180-444ff0066e5d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGtleXxlbnwwfHwwfHx8MA%3D%3D" alt="key" className='w-full rounded-2xl'/>
         </div>
 
-
         <div className='w-full md:w-[67%] lg:w-[40%] lg:ml-20'>
           <form >
             
@@ -56,7 +54,6 @@ const SignIn = () => {
                         className='w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition  ease-in-out focus:bg-blue-950 focus:text-white'/>
                       
                       {
-                      
                         showPassword ? <AiFillEyeInvisible onClick={TogglePass} className='absolute right-3 top-3 text-xl cursor-pointer'/> : <AiFillEye onClick={TogglePass} className='absolute right-3 top-3 text-xl cursor-pointer'/>
                       }
             </div>
@@ -91,4 +88,4 @@ const SignIn = () => {
   )
 }
 
-export default SignIn
+export default SignIn;
