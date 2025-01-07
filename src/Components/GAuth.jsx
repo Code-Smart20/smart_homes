@@ -3,6 +3,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getDoc, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom'; 
+import { toast } from 'react-toastify';
 
 function GAuth() {
   const navigate = useNavigate(); 
@@ -35,7 +36,7 @@ function GAuth() {
       // Navigate to the home page
       navigate("/");
     } catch (error) {
-      console.log(error)
+      toast.error("could not authorise with google")
     }
   }
 
