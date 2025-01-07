@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import GAuth from '../Components/GAuth';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { toast } from 'react-toastify';
 
 const SignIn = () => {
   // State to hold email and password input data
@@ -46,8 +47,7 @@ const SignIn = () => {
         navigate('/');
       }
     } catch (error) {
-      console.error("Error signing in:", error.message);
-      alert("Failed to sign in. Please check your credentials.");
+      toast.error("Incorrect user data")
     }
   }
 

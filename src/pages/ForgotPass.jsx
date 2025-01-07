@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import GAuth from '../Components/GAuth';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { toast } from 'react-toastify';
 
 const ForgotPass = () => {
   const [email, setEmail] = useState("");
@@ -11,16 +12,20 @@ const ForgotPass = () => {
     setEmail(e.target.value);
   }
 
+  // finction to handle forgotpassword
   async function handleForgotPass(e) {
     e.preventDefault();
 
     try {
       const auth = getAuth();
+      // send password function
       await sendPasswordResetEmail(auth, email);
-      
+
+      // toast succesfull message
+      toast.success("email sent successfully")
     } catch (error) {
-      console.log("error changing password",error.message);
-      alert("check if user has signed in previously")
+      // toast error message
+      toast.error("could not send reset password")
     }
   }
 
