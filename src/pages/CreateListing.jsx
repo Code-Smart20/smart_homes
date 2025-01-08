@@ -101,7 +101,9 @@ const CreateListing = () => {
       const FormDataCopy ={
         ...formData,
         geolocation,
-        timestamp: serverTimestamp()
+        timestamp: serverTimestamp(),
+        
+        userRef: auth.currentUser.uid
       }
 
       //remove some Data
@@ -115,7 +117,6 @@ const CreateListing = () => {
 
       toast.success("listing succesfully submitted")
       navigate(`/category/${FormDataCopy.type}/${docRef.id}`)
-      
 
    }
 
