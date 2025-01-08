@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
 const auth = getAuth();
@@ -116,9 +117,13 @@ return (
         </p>
 
       </div>
-
      </form>
-
+     <button className=" text-white my-6 w-full bg-blue-600 uppercase px-7 py-3 text-sm font-medium rounded shadow-medium hover:bg-blue-800 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800" type="submit"
+>
+        <Link to="/create_listing">
+            Sell or Rent A Home
+        </Link>
+     </button>
     </div>
 
   </section>
