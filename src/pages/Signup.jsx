@@ -5,12 +5,14 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { db } from '../firebase';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
+
 
 const Signup = () => {
   
   // capturing inputs from formData
   const [formData, setFormData] = useState({
-    name: '',
+    name: "",
     email: '',
     password: '',
   });
@@ -43,23 +45,30 @@ const Signup = () => {
 
     try {
       const auth = getAuth();
+
+      // signUp User With Email and Password
       const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredentials.user;
 
+      // Upadate AuThenticated users Name
       await updateProfile(auth.currentUser, {
         displayName: name,
       });
 
+      console.log(auth.currentUser.displayName)
+
+      // Removing some sensitve Datas before Storage
       const NewformData = { ...formData };
       delete NewformData.password;
       NewformData.time = serverTimestamp();
 
+      //setting a Database
       await setDoc(doc(db, 'users', user.uid), NewformData);
-
+      
+      // After successfully Adding to Database Navigate to Homepage
       navigate('/');
     } catch (error) {
-      console.error('Error during sign-up:', error);
-      alert('Something went wrong! Please try again.');
+      toast.error("Something Went Wrong with the Registration Process");
     }
   }
 
@@ -150,6 +159,7 @@ const Signup = () => {
 };
 
 export default Signup;
+
 
 
 

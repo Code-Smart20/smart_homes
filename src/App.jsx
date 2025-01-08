@@ -6,6 +6,8 @@ import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import Signup from "./pages/Signup"
 import Header from "./Components/Header";
+import { ToastContainer } from "react-toastify";
+import PrivateRoute from "./Components/PrivateRoute";
 
 function App() {
 
@@ -17,11 +19,31 @@ function App() {
           <Route path="/" element={<Home/>}></Route>
           <Route path="/forgot" element={<ForgotPass/>}></Route>
           <Route path="/offers" element={<Offers/>}></Route>
-          <Route path="/profile" element={<Profile/>}></Route>
+
+          <Route path="/profile" element={<PrivateRoute/>}>
+             <Route path="/profile" element={<Profile/>}></Route>
+          </Route>
+
           <Route path="/sign_in" element={<SignIn/>}></Route>
           <Route path="/sign_up" element={<Signup/>}></Route>
         </Routes>
       </Router>
+
+      <ToastContainer
+       position="bottom-center"
+       autoClose={5000}
+      hideProgressBar={false}
+       newestOnTop={false}
+       closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+     theme="dark"
+     
+/>
+
+      
     </>
   )
 }
