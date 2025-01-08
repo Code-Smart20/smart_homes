@@ -4,7 +4,7 @@ import GAuth from '../Components/GAuth';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { db } from '../firebase';
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { addDoc, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 
 
@@ -55,7 +55,6 @@ const Signup = () => {
         displayName: name,
       });
 
-      console.log(auth.currentUser.displayName)
 
       // Removing some sensitve Datas before Storage
       const NewformData = { ...formData };
@@ -159,9 +158,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
-
-
-
-
-

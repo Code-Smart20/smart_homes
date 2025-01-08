@@ -1,6 +1,12 @@
+import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { db } from "../firebase";
+import { useNavigate } from "react-router";
+import { getAuth } from "firebase/auth";
 
 const CreateListing = () => {
+  // formdata Information
   const [formData, setFormData] = useState({
     type: "rent",
     name: "",
@@ -12,8 +18,11 @@ const CreateListing = () => {
     offer: false,
     regularPrice: 0,
     discountedPrice: 0,
+    latitude: 0,
+    longitude:0
   });
 
+  // destructuring formData
   const {
     type,
     name,
@@ -25,23 +34,111 @@ const CreateListing = () => {
     offer,
     regularPrice,
     discountedPrice,
+    latitude,
+    longitude,
   } = formData;
 
+  {/** 
    // Function to track form changes
    const onChange = () => {
+    let boolean = null;
+    if (e.target.value === "true"){
+      boolean = true
+    }
+
+    if (e.target.value === "false"){
+      boolean = false
+    }
     
+    if(!e.target.boolean){
+      setFormData((prev)=>({
+        ...prev,
+        [e.target.id]: e.target.value
+      })
+    )}
+  };
+  */
+ //loading State
+ const [loading,setLoading] =useState(false)
+ const navigate = useNavigate();
+
+ const user = getAuth();
+ 
+
+  // Function to handle form input changes
+  const onChange = (e) => {
+    let value = e.target.value;
+
+    // Convert to boolean if necessary
+    if (value === "true") value = true;
+    if (value === "false") value = false;
+
+    // Update formData state
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.id]: value, // Update the corresponding property
+    }));
   };
 
-   const onButtonClick=()=>{
-    
+  //submiting data to the backend
+   async function onSubmit(e){
+      e.preventDefault()
+
+      setLoading(true);
+     
+      if(+discountedPrice >= +regularPrice){
+          toast.error("Discounted price needs to be less than Regular price");
+          return
+      }
+
+      // getting the geolocation values in an object
+      let geolocation = {
+           lat: latitude,
+           long: longitude
+      }
+      
+      // making a copy of the formData
+      const FormDataCopy ={
+        ...formData,
+        geolocation,
+        timestamp: serverTimestamp()
+      }
+
+      //remove some Data
+      !FormDataCopy.offer && delete FormDataCopy.discountedPrice;
+      delete FormDataCopy.latitude
+      delete FormDataCopy.longitude
+
+      const docRef = await addDoc(collection(db,'listings'),FormDataCopy)
+      
+      setLoading(false);
+
+      toast.success("listing succesfully submitted")
+      navigate(`/category/${FormDataCopy.type}/${docRef.id}`)
+      
+
    }
+
+  const onButtonClick = (e) => {
+    const { id, value } = e.target;
+
+    setFormData((prevState) => ({
+      ...prevState,
+      [id]: value === "true" ? true : value === "false" ? false : value,
+    }));
+  };
+
+if (loading){
+  <h4>Loading Your Data to the Database</h4>
+}
+
   return (
     <main className="max-w-lg mx-auto px-6 bg-blue-900 rounded-lg mb-10">
       <h1 className="text-3xl text-center text-white mt-6 font-bold py-6">
         Create a Listing
       </h1>
 
-      <form className="py-6">
+      <form className="py-6" onSubmit={onSubmit}>
         {/* Type: Rent or Sell */}
         <p className="text-lg text-white mt-6 font-semibold">Sell / Rent</p>
         <div className="flex">
@@ -177,6 +274,33 @@ const CreateListing = () => {
           required
           className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-6"
         />
+        {/**
+         {/* Address *
+         <p className="text-lg text-white font-semibold">Description</p>
+        <textarea
+          id="address"
+      
+          onChange={onChange}
+          placeholder="Description"
+          required
+          className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-6"
+        />
+        **/}
+         
+         {/**latitude */}
+        <div className="flex space-x-6 justify-start">
+          <div>
+            <p className="text-lg font-semibold ">latitude</p>
+            <input className ="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:bg:white
+            focus:text-gray-700 focus:border-slate-600 text-center" type="number"  id="latitude" value={latitude} onChange={onChange} min="-90" max="90" required/>
+          </div>
+
+          <div>
+            <p className="text-lg font-semibold ">longitude</p>
+            <input className ="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:bg:white
+            focus:text-gray-700 focus:border-slate-600 text-center" type="number"  id="longitude" value={longitude} onChange={onChange} min="-180" max="180" required/>
+          </div>
+        </div>
 
         {/* Offer */}
         <p className="text-lg text-white font-semibold">Offer</p>
@@ -249,8 +373,6 @@ const CreateListing = () => {
       </form>
     </main>
   );
-};
+}};
 
 export default CreateListing;
-
-

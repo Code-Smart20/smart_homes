@@ -22,7 +22,9 @@ function App() {
           <Route path="/forgot" element={<ForgotPass/>}></Route>
           <Route path="/offers" element={<Offers/>}></Route>
 
-          <Route path="/create_listing" element={<CreateListing/>}></Route>
+          <Route path="/create_listing" element={<PrivateRoute/>}>
+                <Route path="/create_listing" element={<CreateListing/>}></Route>
+          </Route>
 
           <Route path="/profile" element={<PrivateRoute/>}>
              <Route path="/profile" element={<Profile/>}></Route>
