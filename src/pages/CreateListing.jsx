@@ -1,11 +1,15 @@
-import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { db } from "../firebase";
 import { useNavigate } from "react-router";
+import axios from "axios";
+import { db } from "../firebase";
+import Spinner from "../Components/Spinner";
 import { getAuth } from "firebase/auth";
 
+
 const CreateListing = () => {
+
   // formdata Information
   const [formData, setFormData] = useState({
     type: "rent",
@@ -18,6 +22,7 @@ const CreateListing = () => {
     offer: false,
     regularPrice: 0,
     discountedPrice: 0,
+    images:[],
     latitude: 0,
     longitude:0
   });
@@ -34,108 +39,157 @@ const CreateListing = () => {
     offer,
     regularPrice,
     discountedPrice,
+    images,
     latitude,
     longitude,
   } = formData;
 
-  {/** 
-   // Function to track form changes
-   const onChange = () => {
-    let boolean = null;
-    if (e.target.value === "true"){
-      boolean = true
-    }
+  const auth = getAuth();
 
-    if (e.target.value === "false"){
-      boolean = false
-    }
-    
-    if(!e.target.boolean){
-      setFormData((prev)=>({
-        ...prev,
-        [e.target.id]: e.target.value
-      })
-    )}
-  };
-  */
  //loading State
- const [loading,setLoading] =useState(false)
- const navigate = useNavigate();
+ const [loading,setLoading] = useState(false)
 
- const user = getAuth();
- 
+ // initializing use Navigate
+ const navigate = useNavigate();
 
   // Function to handle form input changes
   const onChange = (e) => {
-    let value = e.target.value;
+    let boolean = null;
 
-    // Convert to boolean if necessary
-    if (value === "true") value = true;
-    if (value === "false") value = false;
+    if (e.target.value === "true"){
+        boolean = true
+    }
 
-    // Update formData state
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.id]: value, // Update the corresponding property
-    }));
+    if(e.target.value === "false"){
+      boolean = false
+    }
+
+    if(e.target.files){
+      setFormData((prev)=>({
+        ...prev,
+        images: e.target.files
+      }))
+    }
+
+    if(!e.target.files){
+      setFormData((prev)=>({
+        ...prev,
+        [e.target.id]: boolean ?? e.target.value,
+      }))
+    }
   };
 
-  //submiting data to the backend
-   async function onSubmit(e){
-      e.preventDefault()
+  // Submit Function
+  async function onSubmit(e) {
 
-      setLoading(true);
-     
-      if(+discountedPrice >= +regularPrice){
-          toast.error("Discounted price needs to be less than Regular price");
-          return
-      }
+     e.preventDefault();
 
-      // getting the geolocation values in an object
-      let geolocation = {
-           lat: latitude,
-           long: longitude
-      }
-      
-      // making a copy of the formData
-      const FormDataCopy ={
-        ...formData,
-        geolocation,
-        timestamp: serverTimestamp(),
-        
-        userRef: auth.currentUser.uid
-      }
+    setLoading(true);
 
-      //remove some Data
-      !FormDataCopy.offer && delete FormDataCopy.discountedPrice;
-      delete FormDataCopy.latitude
-      delete FormDataCopy.longitude
-
-      const docRef = await addDoc(collection(db,'listings'),FormDataCopy)
-      
+    const geolocation = { 
+      latitude,
+      longitude
+    }
+  
+    // Checking discounted price
+    if (+discountedPrice >= +regularPrice) {
       setLoading(false);
+      toast.error("Discounted price should be less than regular price");
+      return;
+    }
+  
+    // Checking for Images Length
+    if (images.length > 6) {
+      setLoading(false);
+      toast.error("Maximum Six Images Allowed");
+      return;
+    }
+  
+    // Store Image to clouddinary Function
+    async function StoreImg(file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "smart_homes_preset");
+      formData.append("cloud_name", "dxddiv8ls");
+  
+      try {
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dxddiv8ls/image/upload",
+          formData
+        );
+        const secureUrl = response.data.secure_url;
 
-      toast.success("listing succesfully submitted")
-      navigate(`/category/${FormDataCopy.type}/${docRef.id}`)
+        //setImageUrl(secureUrl);
+        return secureUrl;
+      } catch (error) {
+        toast.error("Error uploading image:", error);
+        return null;
+      }
+    }
+  
+    // Function to upload Images to a Storage Service provider
+    async function Imgurls() {
+      const uploadedUrls = await Promise.all(
+        [...images].map(image => StoreImg(image))
+      );
+       
+      // url Filters
+      return uploadedUrls.filter(url =>  url !== null);
+  
+    }
 
-   }
 
-  const onButtonClick = (e) => {
-    const { id, value } = e.target;
+  
 
-    setFormData((prevState) => ({
-      ...prevState,
-      [id]: value === "true" ? true : value === "false" ? false : value,
-    }));
-  };
+    //Listings DoRef
+    const docRef = (collection(db,"listings"));
 
+    // Save Image URLs to the Database
+    const saveDetail = async (Info) => {
+
+      //setting Database for the New Data
+      await addDoc(docRef,{
+        Info
+      })
+      
+    };
+  
+    // Calling the Imgurls function
+    const uploadedImageUrls = await Imgurls();
+
+    //Removing some Datas from FormData
+    const newformData = {...formData,
+      Imgurls:uploadedImageUrls,
+      geolocation,
+      timestamp:serverTimestamp(),
+      useRef: auth.currentUser.uid
+    }
+ 
+    // Removing unused Datas
+    delete newformData.images;
+    !newformData.offer && delete newformData.discountedPrice;
+    delete newformData.latitude;
+    delete newformData.longitude;
+
+    
+    // save new formData in the database
+    await saveDetail(newformData);
+
+    toast.success("listings created successfully")
+  
+    // navigating to the specific category
+    navigate(`category/${newformData.type}/${docRef.id}`)
+
+    setLoading(false);
+  }
+  
 if (loading){
-  <h4>Loading Your Data to the Database</h4>
+  return <Spinner/>
 }
 
   return (
     <main className="max-w-lg mx-auto px-6 bg-blue-900 rounded-lg mb-10">
-      <h1 className="text-3xl text-center text-white mt-6 font-bold py-6">
+      <h1 className="text-3xl text-center text-white mt-6 font-bold py-3">
         Create a Listing
       </h1>
 
@@ -147,7 +201,7 @@ if (loading){
             type="button"
             id="type"
             value="sale"
-            onClick={onButtonClick}
+            onClick={onChange}
             className={`mr-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded ${
               type === "sale" ? "bg-blue-600 text-white" : "bg-white text-black"
             }`}
@@ -158,7 +212,7 @@ if (loading){
             type="button"
             id="type"
             value="rent"
-            onClick={onButtonClick}
+            onClick={onChange}
             className={`ml-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded ${
               type === "rent" ? "bg-blue-600 text-white" : "bg-white text-black"
             }`}
@@ -218,7 +272,7 @@ if (loading){
             type="button"
             id="parking"
             value="true"
-            onClick={onButtonClick}
+            onClick={onChange}
             className={`mr-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded ${
               parking ? "bg-blue-600 text-white" : "bg-white text-black"
             }`}
@@ -229,7 +283,7 @@ if (loading){
             type="button"
             id="parking"
             value="false"
-            onClick={onButtonClick}
+            onClick={onChange}
             className={`ml-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded ${
               !parking ? "bg-blue-600 text-white" : "bg-white text-black"
             }`}
@@ -245,7 +299,7 @@ if (loading){
             type="button"
             id="furnished"
             value="true"
-            onClick={onButtonClick}
+            onClick={onChange}
             className={`mr-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded ${
               furnished ? "bg-blue-600 text-white" : "bg-white text-black"
             }`}
@@ -256,7 +310,7 @@ if (loading){
             type="button"
             id="furnished"
             value="false"
-            onClick={onButtonClick}
+            onClick={onChange}
             className={`ml-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded ${
               !furnished ? "bg-blue-600 text-white" : "bg-white text-black"
             }`}
@@ -266,7 +320,7 @@ if (loading){
         </div>
   
         {/* Description */}
-        <p className="text-lg text-white font-semibold">Description</p>
+        <p className="text-lg text-white font-semibold mt-6">Description</p>
         <textarea
           id="description"
           value={description}
@@ -275,18 +329,6 @@ if (loading){
           required
           className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-6"
         />
-        {/**
-         {/* Address *
-         <p className="text-lg text-white font-semibold">Description</p>
-        <textarea
-          id="address"
-      
-          onChange={onChange}
-          placeholder="Description"
-          required
-          className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-6"
-        />
-        **/}
          
          {/**latitude */}
         <div className="flex space-x-6 justify-start">
@@ -304,13 +346,13 @@ if (loading){
         </div>
 
         {/* Offer */}
-        <p className="text-lg text-white font-semibold">Offer</p>
+        <p className="text-lg text-white font-semibold mt-6">Offer</p>
         <div className="flex">
           <button
             type="button"
             id="offer"
             value="true"
-            onClick={onButtonClick}
+            onClick={onChange}
             className={`mr-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded ${
               offer ? "bg-blue-600 text-white" : "bg-white text-black"
             }`}
@@ -321,7 +363,7 @@ if (loading){
             type="button"
             id="offer"
             value="false"
-            onClick={onButtonClick}
+            onClick={onChange}
             className={`ml-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded ${
               !offer ? "bg-blue-600 text-white" : "bg-white text-black"
             }`}
@@ -359,21 +401,33 @@ if (loading){
               min="50"
               max="400000000"
               required
+
               className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded"
             />
           </div>
         )}
+        
+        <div className="mb-6 mt-6">
+          <p className="text-lg font-semibold">Images</p>
+          <p className="text-white">The first Image will be the cover and Max Image is 6</p>
+          <input type="file" className="w-full px-3 py-2.5 text-red-700 bg-white border
+           border-gray-300 rounded transition duration-150 ease-in-out focus:bg-white focus:border-slate-600" 
+          id="images" onChange={onChange} 
+          accept=".jpg,.png,.jpeg" multiple required/>
+        </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full px-7 py-3 mt-6 bg-blue-600 text-white font-medium text-lg uppercase rounded shadow-md hover:bg-blue-700 transition duration-150"
+          className="w-full px-7 py-3 mt-6 bg-blue-600 text-white font-medium
+           text-lg uppercase rounded shadow-md hover:bg-blue-700 transition duration-150"
+           
         >
           Create Listing
         </button>
       </form>
     </main>
   );
-}};
+};
 
 export default CreateListing;
