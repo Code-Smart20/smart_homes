@@ -1,4 +1,4 @@
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
@@ -81,15 +81,13 @@ const CreateListing = () => {
 
   // Submit Function
   async function onSubmit(e) {
-
-     e.preventDefault();
-
+    e.preventDefault();
     setLoading(true);
-
+  
     const geolocation = { 
       latitude,
       longitude
-    }
+    };
   
     // Checking discounted price
     if (+discountedPrice >= +regularPrice) {
@@ -105,7 +103,7 @@ const CreateListing = () => {
       return;
     }
   
-    // Store Image to clouddinary Function
+    // Store Image to Cloudinary Function
     async function StoreImg(file) {
       const formData = new FormData();
       formData.append("file", file);
@@ -118,8 +116,6 @@ const CreateListing = () => {
           formData
         );
         const secureUrl = response.data.secure_url;
-
-        //setImageUrl(secureUrl);
         return secureUrl;
       } catch (error) {
         toast.error("Error uploading image:", error);
@@ -132,54 +128,45 @@ const CreateListing = () => {
       const uploadedUrls = await Promise.all(
         [...images].map(image => StoreImg(image))
       );
-       
-      // url Filters
-      return uploadedUrls.filter(url =>  url !== null);
-  
-    }
-
-
-  
-
-    //Listings DoRef
-    const docRef = (collection(db,"listings"));
-
-    // Save Image URLs to the Database
-    const saveDetail = async (Info) => {
-
-      //setting Database for the New Data
-      await addDoc(docRef,{
-        Info
-      })
       
+      // url Filters
+      return uploadedUrls.filter(url => url !== null);
+    }
+  
+    // Save Image URLs to the Database
+    const saveDetail = async (Info, docId) => {
+      const docRef = doc(db, "listings", docId); // Use the user ID as the document ID
+      await setDoc(docRef, {
+        Info
+      });
     };
   
     // Calling the Imgurls function
     const uploadedImageUrls = await Imgurls();
-
-    //Removing some Datas from FormData
-    const newformData = {...formData,
-      Imgurls:uploadedImageUrls,
-      geolocation,
-      timestamp:serverTimestamp(),
-      useRef: auth.currentUser.uid
-    }
- 
-    // Removing unused Datas
-    delete newformData.images;
-    !newformData.offer && delete newformData.discountedPrice;
-    delete newformData.latitude;
-    delete newformData.longitude;
-
-    
-    // save new formData in the database
-    await saveDetail(newformData);
-
-    toast.success("listings created successfully")
   
-    // navigating to the specific category
-    navigate(`category/${newformData.type}/${docRef.id}`)
-
+    // Creating new formData with the necessary fields
+    const newFormData = {
+      ...formData,
+      Imgurls: uploadedImageUrls,
+      geolocation,
+      timestamp: serverTimestamp(),
+      userRef: auth.currentUser.uid
+    };
+  
+    // Removing unused Data from newFormData
+    delete newFormData.images;
+    if (!newFormData.offer) delete newFormData.discountedPrice;
+    delete newFormData.latitude;
+    delete newFormData.longitude;
+  
+    // Save new formData in the database with the user ID as the document ID
+    await saveDetail(newFormData, auth.currentUser.uid);
+  
+    toast.success("Listing created successfully");
+  
+    // Navigating to the specific category
+    navigate(`category/${newFormData.type}/${auth.currentUser.uid}`);
+  
     setLoading(false);
   }
   
