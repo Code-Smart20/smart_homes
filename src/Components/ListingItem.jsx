@@ -1,20 +1,33 @@
 import React from 'react'
+import { MdLocationOn } from 'react-icons/md';
 
-const ListingItem = ({ firstImage,description,timestamp, id }) => {
+import { Link } from 'react-router-dom';
+
+const ListingItem = ({ firstImage,description,timestamp, type,id }) => {
   
-
   return (
-    <div key={id} className="listing-item">
+    <li key={id} className="listing-item">
+      <Link to={`/category/${type}/${id}`}>
       {firstImage ? (
         <img src={firstImage} alt="First Listing" className="listing-image" />
+
       ) : (
         <p>No image available</p>
       )}
+      
+      <div>
+        <div>
+          <MdLocationOn/>
+          <p>{}</p>
+        </div>
+              <p>{}</p>
+      </div>
       <p>{description}</p>
       <p>{timestamp}</p>
-    </div>
+      </Link>
+     
+    </li>
   );
 };
 
-
-export default ListingItem
+export default ListingItem;

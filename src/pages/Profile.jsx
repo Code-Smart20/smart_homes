@@ -182,13 +182,12 @@ return (
         <h2 className='text-2xl text-center font-semibold'>My Listings</h2>
 
         <ul>
-
-        
         {listings.length > 0 ? (
           listings.map((listing) => {
             const { id, data } = listing;
             const firstImage = data.Info.Imgurls ? data.Info.Imgurls[0] : null;
             const description = data.Info.description || 'No description available';
+            const type = data.Info.type;
             const timestamp = data.Info.timestamp
               ? new Date(data.Info.timestamp.seconds * 1000).toLocaleString()
               : 'No timestamp available'; // Convert timestamp to a readable string
@@ -199,6 +198,7 @@ return (
                 firstImage={firstImage}
                 description={description}
                 timestamp={timestamp}
+                type={type}
                 id={id}
               />
             );
