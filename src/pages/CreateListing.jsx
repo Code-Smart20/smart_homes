@@ -21,6 +21,7 @@ const CreateListing = () => {
     description: "",
     offer: false,
     regularPrice: 0,
+    location:"",
     discountedPrice: 0,
     images:[],
     latitude: 0,
@@ -37,6 +38,7 @@ const CreateListing = () => {
     furnished,
     description,
     offer,
+    location,
     regularPrice,
     discountedPrice,
     images,
@@ -133,13 +135,28 @@ const CreateListing = () => {
       return uploadedUrls.filter(url => url !== null);
     }
   
-    // Save Image URLs to the Database
+    // Save to the Database
+    {/** 
     const saveDetail = async (Info, docId) => {
       const docRef = doc(db, "listings", docId); // Use the user ID as the document ID
       await setDoc(docRef, {
         Info
       });
-    };
+    };**/}
+
+    // Save to the Database
+const saveDetail = async (Info) => {
+  try {
+    const docRef = await addDoc(collection(db, "listings"), {
+      Info
+    });
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+};
+
+
   
     // Calling the Imgurls function
     const uploadedImageUrls = await Imgurls();
@@ -160,7 +177,7 @@ const CreateListing = () => {
     delete newFormData.longitude;
   
     // Save new formData in the database with the user ID as the document ID
-    await saveDetail(newFormData, auth.currentUser.uid);
+    await saveDetail(newFormData);
   
     toast.success("Listing created successfully");
   
@@ -214,6 +231,20 @@ if (loading){
           type="text"
           id="name"
           value={name}
+          onChange={onChange}
+          placeholder="Name"
+          maxLength="32"
+          minLength="10"
+          required
+          className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-6"
+        />
+         
+         {/**Address field */}
+        <p className="text-lg text-white mt-6 font-semibold">Address</p>
+        <input
+          type="text"
+          id="address"
+          value={address}
           onChange={onChange}
           placeholder="Name"
           maxLength="32"
