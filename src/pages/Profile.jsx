@@ -191,7 +191,7 @@ return (
             const timestamp = data.Info.timestamp
               ? new Date(data.Info.timestamp.seconds * 1000).toLocaleString()
               : 'No timestamp available'; // Convert timestamp to a readable string
-            const address = data.Info.address;
+            const address = data.Info.location;
             const name = data.Info.name
             const discounted = data.Info.discountedPrice
             const offer = data.Info.offer

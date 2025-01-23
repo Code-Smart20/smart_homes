@@ -243,10 +243,10 @@ if (loading){
         <p className="text-lg text-white mt-6 font-semibold">Address</p>
         <input
           type="text"
-          id="address"
-          value={address}
+          id="location"
+          value={location}
           onChange={onChange}
-          placeholder="Name"
+          placeholder="Address"
           maxLength="32"
           minLength="10"
           required

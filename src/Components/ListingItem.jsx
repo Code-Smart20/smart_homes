@@ -6,7 +6,7 @@ import moment from "moment";
 const ListingItem = ({
   bathrooms,
   bedrooms,
-  discount,
+  discounted,
   regular,
   offer,
   name,
@@ -16,7 +16,7 @@ const ListingItem = ({
   type,
   address,
   id,
-   listing
+
 }) => {
   return (
     <li
@@ -51,10 +51,11 @@ const ListingItem = ({
 
           {/* Listing name */}
           <p className="font-semibold text-xl truncate">{name}</p>
+          <p className="font-semibold text-xl truncate">{description}</p>
 
           {/* Price */}
           <p className="text-[#457b9d] mt-2 font-semibold">
-            {offer ? discount : regular}
+            {offer ? discounted : regular}
             {type === "rent" && " / month"}
           </p>
 
