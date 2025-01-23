@@ -2,6 +2,8 @@ import React from "react";
 import { MdLocationOn } from "react-icons/md";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { FaTrash } from "react-icons/fa";
+import {MdEdit} from "react-icons/md"
 
 const ListingItem = ({
   bathrooms,
@@ -16,6 +18,8 @@ const ListingItem = ({
   type,
   address,
   id,
+  onDelete,
+  onEdit,
 
 }) => {
   return (
@@ -65,15 +69,33 @@ const ListingItem = ({
               <p className="font-bold text-xs">
                 {bedrooms > 1 ? `${bedrooms} Beds` : "1 Bed"}
               </p>
-            </div>
-            <div className="flex items-center space-x-1">
+
               <p className="font-bold text-xs">
                 {bathrooms > 1 ? `${bathrooms} Baths` : "1 Bath"}
               </p>
+
             </div>
+            
           </div>
         </div>
       </Link>
+      {
+        
+          onDelete && (
+            <FaTrash onClick ={()=> onDelete(id)}
+            className ="absolute bottom-2 right-2 h-[14px] cursor-pointer text-red-500"/>
+         
+           ) 
+      }
+      
+      {
+        
+          onEdit && (
+            <MdEdit onClick ={()=> onEdit(id)}
+            className ="absolute bottom-2 right-7 h-4 cursor-pointer "/>
+         
+           ) 
+      }
     </li>
   );
 };

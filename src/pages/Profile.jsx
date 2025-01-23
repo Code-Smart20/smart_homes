@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router';
-import { collection, doc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
@@ -125,6 +125,27 @@ function onChange(e) {
       isMounted = false;
     };
   }, [auth.currentUser]);
+
+  async function onDelete(listingId){
+    if (window.confirm("Are sure you want to Delete this Listing?")){
+
+      //deleting a particular listing
+      await deleteDoc(doc(db, "listings",listingId));
+
+      //updating the Listing Array
+      const updatedlistings = listings.filter((listing)=>{
+          listing.id !== listingId
+      });
+      setListings(updatedlistings)
+      toast.success("succesfully deleted the listing");
+    }
+
+  }
+
+  function onEdit(listingId){
+    navigate(`/edit_listing/${listingId}`)
+
+  }
   
   
 return (
@@ -218,6 +239,8 @@ return (
 
                 bathrooms = {bathrooms}
                 bedrooms ={bedrooms}
+                onDelete = {()=>onDelete(id)}
+                onEdit = {()=>onEdit(id)}
 
               />
             );
@@ -230,6 +253,5 @@ return (
     </>
   );
 };
-
 
 export default Profile;
