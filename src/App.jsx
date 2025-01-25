@@ -9,6 +9,9 @@ import Header from "./Components/Header";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./Components/PrivateRoute";
 import CreateListing from "./pages/CreateListing";
+import EditListings from "./pages/EditListings";
+import Footer from "./Components/Footer";
+
 
 
 function App() {
@@ -21,7 +24,7 @@ function App() {
           <Route path="/" element={<Home/>}></Route>
           <Route path="/forgot" element={<ForgotPass/>}></Route>
           <Route path="/offers" element={<Offers/>}></Route>
-
+    
           <Route path="/create_listing" element={<PrivateRoute/>}>
                 <Route path="/create_listing" element={<CreateListing/>}></Route>
           </Route>
@@ -33,6 +36,7 @@ function App() {
           <Route path="/sign_in" element={<SignIn/>}></Route>
           <Route path="/sign_up" element={<Signup/>}></Route>
         </Routes>
+        <Footer/>
       </Router>
 
       <ToastContainer
@@ -47,9 +51,7 @@ function App() {
       pauseOnHover
      theme="dark"
      
-/>
-
-      
+/>   
     </>
   )
 }

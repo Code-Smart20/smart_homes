@@ -1,10 +1,8 @@
 import React from 'react'
 import Sliders from '../Components/Sliders'
-
-
+import FAQ from '../Components/FAQ';
 
 const Home = () => {
-
   const images = 
   [  
     "https://i0.wp.com/urbanshelternigeria.com/wp-content/uploads/2016/03/BRICK-CITY-VALLEY-3-BEDROOM-SEMI-DETACHED-scaled-1.jpg?resize=1170%2C785&ssl=1",
@@ -13,10 +11,10 @@ const Home = () => {
     "https://i0.wp.com/urbanshelternigeria.com/wp-content/uploads/2016/03/4Bedroom-Town-House-at-The-Hills-Resideces-Located-at-The-Guzape-District-Abuja-scaled-1.jpg?resize=1170%2C785&ssl=1",
   ];
  
-
   return (
     <div>
       <Sliders images={images}/>
+      <FAQ/>
     </div>
     )
 }
