@@ -48,6 +48,7 @@ const SignIn = () => {
       }
     } catch (error) {
       toast.error("Incorrect user data")
+      navigate("/sign_up")
     }
   }
 
