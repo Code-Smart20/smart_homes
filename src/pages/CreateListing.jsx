@@ -184,7 +184,7 @@ const saveDetail = async (Info) => {
     toast.success("Listing created successfully");
   
     // Navigating to the specific category
-    navigate(`category/${newFormData.type}/${auth.currentUser.uid}`);
+    navigate("/profile");
   
     setLoading(false);
   }
