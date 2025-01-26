@@ -31,7 +31,6 @@ const ListingItem = ({
   
   function HandleEmail(email){
     const mailtoLink = `mailto:${email}`;
-
     // Open the email client
     window.location.href = mailtoLink;
   }
@@ -42,15 +41,13 @@ const ListingItem = ({
       key={id}
     >
       <Link className="contents" to={`/category/${type}/${id}`}>
-        {firstImage ? (
+        {firstImage && (
           <img
             className="h-[200px] w-full object-cover hover:scale-105 transition-transform duration-200 ease-in"
             src={firstImage}
             alt="First Listing"
             loading="lazy"
           />
-        ) : (
-          <p className="text-center text-gray-500">No image available</p>
         )}
 
         {/* Format timestamp using Moment */}

@@ -65,51 +65,44 @@ const Home = () => {
       <Sliders images={images} />
 
       <h2 className="text-3xl text-center mt-10 font-bold text-white">Recent Listings</h2>
+      <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mb-6 max-w-6xl px-3 mt-6 mx-auto">
+  {offerListings?.map((listing) => {
+    const { id, data } = listing;
+    const firstImage = data.Info.Imgurls ? data.Info.Imgurls[0] : null;
+    const description = data.Info.description || "No description available";
+    const type = data.Info.type;
+    const timestamp = data.Info.timestamp
+      ? new Date(data.Info.timestamp.seconds * 1000).toLocaleString()
+      : "No timestamp available"; // Convert timestamp to a readable string
+    const address = data.Info.location;
+    const name = data.Info.name;
+    const discounted = data.Info.discountedPrice;
+    const offer = data.Info.offer;
+    const regular = data.Info.regularPrice;
+    const bathrooms = data.Info.bathrooms;
+    const bedrooms = data.Info.bedroom;
+    const email = data.Info.email;
 
-
-      <ul className='sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl-grid-cols-5 mt-6 mb-6 max-w-6xl px-3 mt-6 mx-auto'>
-        {loading ? (  // Check if data is still loading
-          <Spinner/> // Show a loading message if still fetching
-        ) : (
-          offerListings?.map((listing) => {
-            const { id, data } = listing;
-            const firstImage = data.Info.Imgurls ? data.Info.Imgurls[0] : null;
-            const description = data.Info.description || 'No description available';
-            const type = data.Info.type;
-            const timestamp = data.Info.timestamp
-              ? new Date(data.Info.timestamp.seconds * 1000).toLocaleString()
-              : 'No timestamp available'; // Convert timestamp to a readable string
-            const address = data.Info.location;
-            const name = data.Info.name;
-            const discounted = data.Info.discountedPrice;
-            const offer = data.Info.offer;
-            const regular = data.Info.regularPrice;
-            const bathrooms = data.Info.bathrooms;
-            const bedrooms = data.Info.bedroom;
-            const email = data.Info.email;
-
-            return (
-              <ListingItem
-                key={id}
-                firstImage={firstImage}
-                address={address}
-                description={description}
-                timestamp={timestamp}
-                type={type}
-                id={id}
-                name={name}
-                discounted={discounted}
-                regular={regular}
-                offer={offer}
-                email={email}
-                bathrooms={bathrooms}
-                bedrooms={bedrooms}
-              />
-            );
-          })
-        )}
-      </ul>
-
+    return (
+      <ListingItem
+        key={id}
+        firstImage={firstImage}
+        address={address}
+        description={description}
+        timestamp={timestamp}
+        type={type}
+        id={id}
+        name={name}
+        discounted={discounted}
+        regular={regular}
+        offer={offer}
+        email={email}
+        bathrooms={bathrooms}
+        bedrooms={bedrooms}
+      />
+    );
+  })}
+</ul>      
       <FAQ />
     </div>
   );

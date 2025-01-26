@@ -191,7 +191,7 @@ const saveDetail = async (Info) => {
   
 if (loading){
   return <Spinner/>
-}
+  }
 
   return (
     <main className="max-w-lg mx-auto px-6 bg-blue-900 rounded-lg mb-10">
@@ -242,7 +242,7 @@ if (loading){
         />
 
          {/* Email */}
-         <p className="text-lg text-white mt-6 font-semibold">Name</p>
+         <p className="text-lg text-white mt-3 font-semibold">Email</p>
         <input
           type="text"
           id="email"
@@ -250,12 +250,12 @@ if (loading){
           onChange={onChange}
           placeholder="Contact Email"
           required
-          className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-6"
+          className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-3"
         />
          
          
          {/**Address field */}
-        <p className="text-lg text-white mt-6 font-semibold">Address</p>
+        <p className="text-lg text-white mt-3 font-semibold">Address</p>
         <input
           type="text"
           id="location"
