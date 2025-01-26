@@ -1,8 +1,33 @@
-# React + Vite
+Smart Homes  is a modern web application that mimics the functionality of popular real estate platforms. The application enables users create listings for House and sell or rent them. It also includes features for user authentication and listing management. This project demonstrates the integration of React, Cloudinary and Firebase to build a fully functional real estate platform.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TECHNOLOGIES AND THIRD LIBRARIES USED
+    a. React
+    b. tailwind
+    c. Css
+    d. Html
+    d. Tailwind
+    e. Cloudinary
+    f. Firebase
+    g. React Moment
+    h. React.icons
+    i. React Toastify
+    j. Javascript
 
-Currently, two official plugins are available:
+    
+    How to Use the Hosted Software
+-Visit the Website:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-Sign Up:
+   -Click on "Sign Up" to create an account.
+   -Fill in your details and verify your email address.
+
+Log In:
+   -Use your credentials to loginIn.
+
+Create-Listing
+    - Go to the create listing page to create a listing by filling in the forms
+
+Profile page
+     - navigate to the profile page to see listings created
+     - you can delete or Edit a particular listing you created
+
