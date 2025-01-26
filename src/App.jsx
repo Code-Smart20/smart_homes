@@ -9,7 +9,6 @@ import Header from "./Components/Header";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./Components/PrivateRoute";
 import CreateListing from "./pages/CreateListing";
-import EditListings from "./pages/EditListings";
 import Footer from "./Components/Footer";
 
 

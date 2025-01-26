@@ -14,6 +14,7 @@ const CreateListing = () => {
   const [formData, setFormData] = useState({
     type: "rent",
     name: "",
+    email:"",
     bedrooms: 1,
     bathrooms: 1,
     parking: false,
@@ -32,6 +33,7 @@ const CreateListing = () => {
   const {
     type,
     name,
+    email,
     bedrooms,
     bathrooms,
     parking,
@@ -238,6 +240,19 @@ if (loading){
           required
           className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-6"
         />
+
+         {/* Email */}
+         <p className="text-lg text-white mt-6 font-semibold">Name</p>
+        <input
+          type="text"
+          id="email"
+          value={email}
+          onChange={onChange}
+          placeholder="Contact Email"
+          required
+          className="w-full px-4 py-2 text-lg text-gray-700 bg-white border rounded mb-6"
+        />
+         
          
          {/**Address field */}
         <p className="text-lg text-white mt-6 font-semibold">Address</p>
