@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router';
 import { collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore';
@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import ListingItem from '../Components/ListingItem'
 import Spinner from '../Components/Spinner';
+
 
 const Profile = () => {
 const auth = getAuth();
@@ -85,16 +86,11 @@ function onChange(e) {
         // Query to fetch listings where the userRef matches the current user UID
         const q = query(
           listingRef,
-          where("Info.userRef", "==", auth.currentUser.uid)  // Filtering for the current user's listings
+          where("userRef", "==", auth.currentUser.uid), orderBy("timestamp", "desc")  // Filtering for the current user's listings
         );
-  
-        console.log("Query: ", q);
   
         // Execute the query
         const querySnap = await getDocs(q);
-  
-        // Debugging: Check the query snapshot size
-       console.log("Query Snapshot Size:", querySnap.size);
   
         let fetchedListings = [];
         querySnap.forEach((doc) => {
@@ -104,12 +100,8 @@ function onChange(e) {
           });
         });
 
-  
         // Set the fetched listings to the state
-        setListings(fetchedListings)  
-             
-  
-        
+        setListings(fetchedListings);        
         setLoading(false);
       } catch (error) {
         console.error("Error fetching listings: ", error);
@@ -150,7 +142,10 @@ function onChange(e) {
 
   }
   
-  
+  if(loading){
+    return <Spinner/>
+  }
+
 return (
     <>
       <section className="max-w-6xl mx-auto flex justify-center items-center flex-col">
@@ -206,47 +201,22 @@ return (
         <h2 className='text-2xl text-center font-semibold'>My Listings</h2>
 
         <ul className='sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mt-6 mb-6'>
-  {listings && (
-    listings.map((listing) => {
-      const { id, data } = listing;
-      const firstImage = data.Info?.Imgurls ? data.Info.Imgurls[0] : null;
-      const description = data.Info?.description || 'No description available';
-      const type = data.Info?.type;
-      const timestamp = data.Info?.timestamp
-        ? new Date(data.Info.timestamp.seconds * 1000).toLocaleString()
-        : 'No timestamp available'; // Convert timestamp to a readable string
-      const address = data.Info?.location;
-      const name = data.Info?.name;
-      const discounted = data.Info?.discountedPrice;
-      const offer = data.Info?.offer;
-      const regular = data.Info?.regularPrice;
-      const bathrooms = data.Info?.bathrooms;
-      const bedrooms = data.Info?.bedroom;
-      const email = data.Info?.email;
-
-      return (
-        <ListingItem
-          key={id}
-          firstImage={firstImage}
-          address={address}
-          description={description}
-          timestamp={timestamp}
-          type={type}
-          id={id}
-          name={name}
-          discounted={discounted}
-          regular={regular}
-          offer={offer}
-          email={email}
-          bathrooms={bathrooms}
-          bedrooms={bedrooms}
-          onDelete={() => onDelete(id)}
-          onEdit={() => onEdit(id)}
-        />
-      );
-    })
-  )}
-</ul>
+            {listings && (
+              listings.map((listing) => {
+                const { id, data } = listing;
+              
+                return (
+                  <ListingItem
+                    key={id}
+                    data={data}
+                    id={id}
+                    onDelete={() => onDelete(id)}
+                    onEdit={() => onEdit(id)}
+                  />
+                );
+              })
+            )}
+        </ul>
 
       </div>
     </>
