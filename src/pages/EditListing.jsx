@@ -1,14 +1,14 @@
-import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import { addDoc, collection, doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import { db } from "../firebase";
 import Spinner from "../Components/Spinner";
 import { getAuth } from "firebase/auth";
 
 
-const CreateListing = () => {
+const EditListing = () => {
 
   // formdata Information
   const [formData, setFormData] = useState({
@@ -52,9 +52,57 @@ const CreateListing = () => {
 
  //loading State
  const [loading,setLoading] = useState(false)
+ const [listing,setListing] = useState(null)
 
  // initializing use Navigate
  const navigate = useNavigate();
+ const {listingId} = useParams();
+ console.log(listingId)
+ 
+
+ //Checking if the person Editing the page is the creator of the page
+useEffect(()=>{
+    if(listing && listing.userRef !== auth.currentUser.uid){
+        toast.error("You cannot edit this listing");
+        navigate("/");
+    }
+},[auth.currentUser.uid,listing,navigate])
+
+useEffect(() => {
+  setLoading(true);
+
+  async function fetchedListings() {
+      try {
+          const docRef = doc(db, "listings", listingId);
+          const docSnap = await getDoc(docRef);
+
+          console.log(docSnap);
+
+          if (docSnap.exists()) {
+              setListing(docSnap.data());
+              setFormData({
+                  ...docSnap.data(),
+                  latitude : docSnap.data().geolocation.latitude,
+                  longitude: docSnap.data().geolocation.longitude
+              });
+          } else {
+              navigate("/");
+              toast.error("Listing does not exist");
+          }
+      } catch (error) {
+          console.error("Error fetching listing:", error);
+          toast.error("Failed to fetch listing");
+      } finally {
+          setLoading(false);
+      }
+  }
+
+  fetchedListings();
+}, [navigate, listingId]);
+
+
+// for fetching USers Data and Filling It
+
 
   // Function to handle form input changes
   const onChange = (e) => {
@@ -140,7 +188,7 @@ const CreateListing = () => {
     // Save to the Database
 const saveDetail = async (newFormData) => {
   try {
-     await addDoc(collection(db, "listings"),
+     await updateDoc(doc(db, "listings",listingId),
       newFormData
     );
 
@@ -170,7 +218,7 @@ const saveDetail = async (newFormData) => {
     // Save new formData in the database with the user ID as the document ID
     await saveDetail(newFormData);
   
-    toast.success("Listing created successfully");
+    toast.success("Listing Edited successfully");
   
     // Navigating to the specific category(change this later)
     navigate("/profile");
@@ -185,7 +233,7 @@ if (loading){
   return (
     <main className="max-w-lg mx-auto px-6 bg-blue-900 rounded-lg mb-10">
       <h1 className="text-3xl text-center text-white mt-3 font-bold pt-3">
-        Create a Listing
+        Edit Listing
       </h1>
 
       <form className="py-4 pb-10" onSubmit={onSubmit}>
@@ -445,11 +493,11 @@ if (loading){
            text-lg uppercase rounded shadow-md hover:bg-blue-700 transition duration-150"
            
         >
-          Create Listing
+          Edit Listing
         </button>
       </form>
     </main>
   );
 };
 
-export default CreateListing;
+export default EditListing;

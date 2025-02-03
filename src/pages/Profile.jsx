@@ -137,7 +137,7 @@ function onChange(e) {
   }
 
   function onEdit(listingId){
-    console.log("navigating");
+    
     navigate(`/edit_listing/${listingId}`)
 
   }

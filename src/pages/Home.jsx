@@ -65,6 +65,7 @@ const Home = () => {
       <Sliders images={images} />
 
       <h2 className="text-3xl text-center mt-10 font-bold text-white">Recent Listings</h2>
+      {/** 
       <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mb-6 max-w-6xl px-3 mt-6 mx-auto">
   {offerListings?.map((listing) => {
     const { id, data } = listing;
@@ -102,7 +103,7 @@ const Home = () => {
       />
     );
   })}
-</ul>      
+</ul>  */}    
       <FAQ />
     </div>
   );

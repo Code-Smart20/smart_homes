@@ -6,34 +6,10 @@ import { FaTrash } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
 const ListingItem = ({
-  bathrooms,
-  bedrooms,
-  discounted,
-  regular,
-  offer,
-  name,
-  firstImage,
-  description,
-  timestamp,
-  type,
-  address,
-  id,
-  onDelete,
-  onEdit,
-  email,
+ data,id,onDelete,onEdit
 }) => {
-  const [contactlandlord, setContactlandlord] = useState(true);
 
-  // Toggle the contact landlord state
-  const handleContactClick = () => {
-    setContactlandlord((prev) => !prev);
-  };
-  
-  function HandleEmail(email){
-    const mailtoLink = `mailto:${email}`;
-    // Open the email client
-    window.location.href = mailtoLink;
-  }
+  const {Imgurls, description, type, address,offer,timestamp,name,discountedPrice,regularprice,bathrooms,bedrooms,email} = data;
 
   return (
     <li
@@ -41,10 +17,10 @@ const ListingItem = ({
       key={id}
     >
       <Link className="contents" to={`/category/${type}/${id}`}>
-        {firstImage && (
+        {Imgurls[0] && (
           <img
             className="h-[200px] w-full object-cover hover:scale-105 transition-transform duration-200 ease-in"
-            src={firstImage}
+            src={Imgurls[0]}
             alt="First Listing"
             loading="lazy"
           />
@@ -52,7 +28,7 @@ const ListingItem = ({
 
         {/* Format timestamp using Moment */}
         <p className="absolute top-2 left-2 text-white bg-blue-950 uppercase text-xs font-semibold rounded-md px-2 py-1 shadow-lg">
-          {moment(timestamp).fromNow()}
+          {moment(timestamp.toDate()).fromNow()}
         </p>
 
         <div className="w-full p-4">
@@ -70,7 +46,7 @@ const ListingItem = ({
 
           {/* Price */}
           <p className="text-[#457b9d] mt-2 font-semibold">
-            {offer ? discounted : regular}
+            {offer ? discountedPrice : regularprice}
             {type === "rent" && " / month"}
           </p>
 
@@ -85,21 +61,10 @@ const ListingItem = ({
                 {bathrooms > 1 ? `${bathrooms} Baths` : "1 Bath"}
               </p>
             </div>
-
             
           </div>
         </div>
       </Link>
-
-        {/* Email Button */}
-        {contactlandlord && !onEdit && !onDelete && (
-              <a onClick={()=>HandleEmail(email)}
-                className="bg-blue-900 mb-10 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-blue-600 transition duration-200"
-              >
-                Contact Landlord
-              </a>
-            )
-          }
 
       {/* Delete Icon */}
       {onDelete && (
