@@ -12,6 +12,7 @@ import CreateListing from "./pages/CreateListing";
 import Footer from "./Components/Footer";
 import EditListing from "./pages/EditListing";
 
+
 function App() {
 
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<Home/>}></Route>
           <Route path="/forgot" element={<ForgotPass/>}></Route>
           <Route path="/offers" element={<Offers/>}></Route>
+          
     
           <Route path="/create_listing" element={<PrivateRoute/>}>
                 <Route path="/create_listing" element={<CreateListing/>}></Route>

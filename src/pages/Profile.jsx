@@ -108,15 +108,8 @@ function onChange(e) {
         setLoading(false);
       }
     }
-  
-    // Initial fetch
-    let isMounted = true;
+
     fetchListings();
-  
-    // Cleanup function to prevent memory leaks
-    return () => {
-      isMounted = false;
-    };
   }, [auth.currentUser]);
 
   async function onDelete(listingId){
